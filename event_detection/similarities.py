@@ -21,13 +21,14 @@ def common_nodes(alpha_graph, beta_graph):
     return common_nodes_ids
 
 
-# returns the number of common neighbors between all
+# Returns the number of common neighbors between all
 # the common nodes of two graphs
 # |Γ(u) τομή Γ(v)|
 def common_neighbors(alpha_graph, beta_graph):
     commons_ids = common_nodes(alpha_graph, beta_graph)
     alpha_dict = nx.get_node_attributes(alpha_graph, 'name')
     beta_dict = nx.get_node_attributes(beta_graph, 'name')
+    # reverse dictionaries are for debugging
     reverse_ad = dict((y, x) for x, y in alpha_dict.items())
     reverse_bd = dict((y, x) for x, y in beta_dict.items())
 
@@ -42,11 +43,41 @@ def common_neighbors(alpha_graph, beta_graph):
         for b_n in beta_neighbors:
             beta_n_names.append(beta_dict[b_n])
 
-        common_neighbors_names = list(set(alpha_n_names).intersection(beta_n_names))
+        common_neighbors_names = set(alpha_n_names).intersection(beta_n_names)
         com_ids_score.append((c_id[0], c_id[1], len(common_neighbors_names)))
         alpha_n_names.clear()
         beta_n_names.clear()
     return com_ids_score
+
+
+# Returns a set with the union of the neighbors of two common nodes
+# |Γ(u) ένωση Γ(v)|
+def union_neighbors(alpha_graph, beta_graph):
+    commons_ids = common_nodes(alpha_graph, beta_graph)
+    alpha_dict = nx.get_node_attributes(alpha_graph, 'name')
+    beta_dict = nx.get_node_attributes(beta_graph, 'name')
+    # reverse dictionaries are for debugging
+    reverse_ad = dict((y, x) for x, y in alpha_dict.items())
+    reverse_bd = dict((y, x) for x, y in beta_dict.items())
+
+    alpha_n_names = list()
+    beta_n_names = list()
+    ids_union_size = list()
+
+    for c_id in commons_ids:
+        alpha_neighbors = alpha_graph.neighbors(c_id[0])
+        beta_neighbors = beta_graph.neighbors(c_id[1])
+        for a_n in alpha_neighbors:
+            alpha_n_names.append(alpha_dict[a_n])
+        for b_n in beta_neighbors:
+            beta_n_names.append(beta_dict[b_n])
+
+        all_neighbors = set(alpha_n_names).union(beta_n_names)
+        # print(alpha_dict[c_id[0]], beta_dict[c_id[1]], all_neighbors)
+        ids_union_size.append((c_id[0], c_id[1], len(all_neighbors)))
+        alpha_n_names.clear()
+        beta_n_names.clear()
+    return ids_union_size
 
 
 # Returns the Jaccard similarity of two common nodes
@@ -55,9 +86,19 @@ def common_neighbors(alpha_graph, beta_graph):
 # both nodes do not have any neighbors so that
 # is something similar between them.
 def jaccard_similarity(alpha_graph, beta_graph):
+    intesec_score = common_neighbors(alpha_graph, beta_graph)
+    union_score = union_neighbors(alpha_graph, beta_graph)
+
+    ids_jaccard_score = list()
+    for idx, score in enumerate(intesec_score):
+        if score[2] == 0 and union_score[idx][2] == 0:
+            ids_jaccard_score.append((score[0], score[1], 1))
+        elif score[2] == 0:
+            ids_jaccard_score.append((score[0], score[1], 0))
+        else:
+            ids_jaccard_score.append((score[0], score[1], score[2] / union_score[idx][2]))
     print("i")
-
-
+    return ids_jaccard_score
 
 
 if __name__ == "__main__":
@@ -67,4 +108,6 @@ if __name__ == "__main__":
     a_graph = graph_tools.form_graph(a_date, "Sentence", "P")
     b_graph = graph_tools.form_graph(b_date, "Sentence", "P")
     c_graph = graph_tools.form_graph(c_date, "Sentence", "P")
-    common_neighbors(b_graph, c_graph)
+    jaccard_similarity(a_graph, b_graph)
+
+
