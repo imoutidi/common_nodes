@@ -86,19 +86,31 @@ def union_neighbors(alpha_graph, beta_graph):
 # both nodes do not have any neighbors so that
 # is something similar between them.
 def jaccard_similarity(alpha_graph, beta_graph):
-    intesec_score = common_neighbors(alpha_graph, beta_graph)
+    intersec_score = common_neighbors(alpha_graph, beta_graph)
     union_score = union_neighbors(alpha_graph, beta_graph)
 
     ids_jaccard_score = list()
-    for idx, score in enumerate(intesec_score):
+    for idx, score in enumerate(intersec_score):
         if score[2] == 0 and union_score[idx][2] == 0:
             ids_jaccard_score.append((score[0], score[1], 1))
         elif score[2] == 0:
             ids_jaccard_score.append((score[0], score[1], 0))
         else:
             ids_jaccard_score.append((score[0], score[1], score[2] / union_score[idx][2]))
-    print("i")
     return ids_jaccard_score
+
+
+def preferential_attachment(alpha_graph, beta_graph):
+    commons_ids = common_nodes(alpha_graph, beta_graph)
+
+    ids_attachment_score = list()
+    for c_id in commons_ids:
+        alpha_neighbors = alpha_graph.neighbors(c_id[0])
+        beta_neighbors = beta_graph.neighbors(c_id[1])
+        num_of_a_n = sum(1 for _ in alpha_neighbors)
+        num_of_b_n = sum(1 for _ in beta_neighbors)
+        ids_attachment_score.append((c_id[0], c_id[1], num_of_a_n * num_of_b_n))
+    return ids_attachment_score
 
 
 if __name__ == "__main__":
@@ -108,6 +120,6 @@ if __name__ == "__main__":
     a_graph = graph_tools.form_graph(a_date, "Sentence", "P")
     b_graph = graph_tools.form_graph(b_date, "Sentence", "P")
     c_graph = graph_tools.form_graph(c_date, "Sentence", "P")
-    jaccard_similarity(a_graph, b_graph)
+    preferential_attachment(a_graph, b_graph)
 
 
