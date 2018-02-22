@@ -22,7 +22,7 @@ def common_nodes(alpha_graph, beta_graph):
 
 
 # Returns the number of common neighbors between all
-# the common nodes of two graphs
+# common nodes of two graphs
 # |Γ(u) τομή Γ(v)|
 def common_neighbors(alpha_graph, beta_graph):
     commons_ids = common_nodes(alpha_graph, beta_graph)
@@ -100,6 +100,24 @@ def jaccard_similarity(alpha_graph, beta_graph):
     return ids_jaccard_score
 
 
+# Calculating the sorenson similarity of the common nodes
+# of the graphs
+def sorenson_similarity(alpha_graph, beta_graph):
+    intersec_score = common_neighbors(alpha_graph, beta_graph)
+
+    ids_sorenson_score = list()
+    for score in intersec_score:
+        degree_sum = alpha_graph.degree(score[0]) + beta_graph.degree(score[1])
+
+        if degree_sum == 0:
+            ids_sorenson_score.append((score[0], score[1], 1))
+        elif score[2] == 0:
+            ids_sorenson_score.append((score[0], score[1], 0))
+        else:
+            ids_sorenson_score.append((score[0], score[1], (2 * score[2]) / degree_sum))
+    return ids_sorenson_score
+
+
 def preferential_attachment(alpha_graph, beta_graph):
     commons_ids = common_nodes(alpha_graph, beta_graph)
 
@@ -114,12 +132,14 @@ def preferential_attachment(alpha_graph, beta_graph):
 
 
 if __name__ == "__main__":
+    file_path = "/home/iraklis/PycharmProjects/newsMiningVol2/Graphs/"
     a_date = date(2018, 2, 2)
     b_date = date(2018, 2, 3)
     c_date = date(2018, 2, 4)
-    a_graph = graph_tools.form_graph(a_date, "Sentence", "P")
-    b_graph = graph_tools.form_graph(b_date, "Sentence", "P")
-    c_graph = graph_tools.form_graph(c_date, "Sentence", "P")
-    preferential_attachment(a_graph, b_graph)
+    a_graph = graph_tools.form_graph(a_date, "Sentence", "P", file_path)
+    b_graph = graph_tools.form_graph(b_date, "Sentence", "P", file_path)
+    c_graph = graph_tools.form_graph(c_date, "Sentence", "P", file_path)
+    p = sorenson_similarity(a_graph, b_graph)
+    print(p)
 
 

@@ -30,8 +30,8 @@ def date_range(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def form_graph(c_date, r_type, e_type):
-    path = "/home/iraklis/PycharmProjects/newsMiningVol2/Graphs/"
+# Window graphs and Graphs in newminingvol2 have the save directory format
+def form_graph(c_date, r_type, e_type, path):
 
     current_day = str(c_date.year) + "-" + str(c_date.month) + "-" + str(c_date.day)
     current_week = str(c_date.isocalendar()[1]) + "-" + str(c_date.isocalendar()[0])
