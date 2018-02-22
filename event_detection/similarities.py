@@ -1,6 +1,7 @@
 from datetime import date
 import networkx as nx
 from tools import graph_tools
+import math
 
 
 # Here we will calculate a number of common node
@@ -118,6 +119,26 @@ def sorenson_similarity(alpha_graph, beta_graph):
     return ids_sorenson_score
 
 
+# Calculating the sorenson similarity of the common nodes
+# of the graphs
+def salton_similarity(alpha_graph, beta_graph):
+    intersec_score = common_neighbors(alpha_graph, beta_graph)
+
+    ids_salton_score = list()
+    for score in intersec_score:
+        a_degree = alpha_graph.degree(score[0])
+        b_degree = beta_graph.degree(score[1])
+        root_of_degree_product = math.sqrt(a_degree * b_degree)
+
+        if a_degree == 0 and b_degree == 0:
+            ids_salton_score.append((score[0], score[1], 1))
+        elif score[2] == 0:
+            ids_salton_score.append((score[0], score[1], 0))
+        else:
+            ids_salton_score.append((score[0], score[1], score[2] / root_of_degree_product))
+    return ids_salton_score
+
+
 def preferential_attachment(alpha_graph, beta_graph):
     commons_ids = common_nodes(alpha_graph, beta_graph)
 
@@ -139,7 +160,7 @@ if __name__ == "__main__":
     a_graph = graph_tools.form_graph(a_date, "Sentence", "P", file_path)
     b_graph = graph_tools.form_graph(b_date, "Sentence", "P", file_path)
     c_graph = graph_tools.form_graph(c_date, "Sentence", "P", file_path)
-    p = sorenson_similarity(a_graph, b_graph)
+    p = salton_similarity(a_graph, b_graph)
     print(p)
 
 
