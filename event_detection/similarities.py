@@ -29,7 +29,7 @@ def common_neighbors(alpha_graph, beta_graph):
     commons_ids = common_nodes(alpha_graph, beta_graph)
     alpha_dict = nx.get_node_attributes(alpha_graph, 'name')
     beta_dict = nx.get_node_attributes(beta_graph, 'name')
-    # reverse dictionaries are for debugging
+    # reverse dictionaries for debugging
     reverse_ad = dict((y, x) for x, y in alpha_dict.items())
     reverse_bd = dict((y, x) for x, y in beta_dict.items())
 
@@ -57,9 +57,6 @@ def union_neighbors(alpha_graph, beta_graph):
     commons_ids = common_nodes(alpha_graph, beta_graph)
     alpha_dict = nx.get_node_attributes(alpha_graph, 'name')
     beta_dict = nx.get_node_attributes(beta_graph, 'name')
-    # reverse dictionaries are for debugging
-    reverse_ad = dict((y, x) for x, y in alpha_dict.items())
-    reverse_bd = dict((y, x) for x, y in beta_dict.items())
 
     alpha_n_names = list()
     beta_n_names = list()
@@ -195,7 +192,7 @@ if __name__ == "__main__":
     c_date = date(2018, 2, 4)
     a_graph = graph_tools.form_graph(a_date, "Sentence", "P", file_path)
     b_graph = graph_tools.form_graph(b_date, "Sentence", "P", file_path)
-    c_graph = graph_tools.form_graph(c_date, "Sentence", "P", file_path)
+    # c_graph = graph_tools.form_graph(c_date, "Sentence", "P", file_path)
     p = hub_promoted(a_graph, b_graph)
     q = hub_depressed(a_graph, b_graph)
     print(p)

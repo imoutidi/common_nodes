@@ -9,7 +9,7 @@ def read_edges_csv(filename):
 
     next(csv_reader)
     for row in csv_reader:
-        edge_list.append((int(row[0]), int(row[1]), int(row[2])))
+        edge_list.append((int(row[0]), int(row[1]), float(row[2])))
 
     return edge_list
 
